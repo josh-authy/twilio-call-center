@@ -3,28 +3,17 @@ var app = angular.module('supportApplication', ['ngMessages']);
 app.controller('ContactController', function ($scope, $http, $timeout, $log) {
 
 	$scope.submitted = false;
-	$scope.question = { 
-		channel: 'phone', 
-		phone: null, 
-		name: null, 
-		text: null, 
-		team: null,
-		type: null
-	};
+	$scope.question = { };
 
 	$scope.init = function(){
 
 		$http.get('/api/setup')
 
 			.then(function onSuccess(response) {
-
 				$scope.configuration = response.data;
-				
 			}, function onError(response) { 
-
 				$log.error('error loading configuration');
 				$log.error(response);
-
 			});
 
 	};        
@@ -32,12 +21,13 @@ app.controller('ContactController', function ($scope, $http, $timeout, $log) {
 	$scope.submit = function(){
 
 		var task = { 
-			channel: 'phone', 
+			channel: 'phone',
+			type: 'callback_request',
 			phone: $scope.question.phone,
 			name: $scope.question.name, 
 			text: $scope.question.text, 
 			team: $scope.question.team,
-			type: 'Callback request'
+			title: 'Callback request'
 		};
 
 		$http.post('/api/tasks/callback', task)
@@ -45,14 +35,7 @@ app.controller('ContactController', function ($scope, $http, $timeout, $log) {
 			.then(function onSuccess(response) {
 
 				$scope.submitted = true;
-				$scope.question = { 
-					channel: 'phone', 
-					phone: null, 
-					name: null, 
-					text: null,
-					team: null,
-					type: null
-				};
+				$scope.question = { };
 
 				$scope.supportForm.$setUntouched();
 				
