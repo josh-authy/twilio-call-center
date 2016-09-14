@@ -8,7 +8,7 @@ const client = new twilio(
 	process.env.TWILIO_ACCOUNT_SID,
 	process.env.TWILIO_AUTH_TOKEN)
 
-/* client for Twilio Taskrouter */
+/* client for Twilio TaskRouter */
 const taskrouterClient = new twilio.TaskRouterClient(
 	process.env.TWILIO_ACCOUNT_SID,
 	process.env.TWILIO_AUTH_TOKEN,
@@ -31,29 +31,29 @@ module.exports.inbound = function (req, res) {
 
 		return module.exports.getOngoingTasks(req.body.From).then(function (tasks) {
 			console.log(req.direction +  'user ' + req.body.From + ' has ' + tasks.length + ' ongoing task(s)')
-			
-			if (tasks.length === 0){
-				 return module.exports.createTask(req, channel)
-			}		
-	
+
+			if (tasks.length === 0) {
+				return module.exports.createTask(req, channel)
+			}
+
 		}).then(function () {
 
 			return service.channels(channel.sid).messages.create({
 				from: req.body.From,
 				body: req.body.Body
-			}).then(function(message){
+			}).then(function (message) {
 				console.log(req.direction + 'chat message for ' + message.from + ' on channel ' + channel.sid + ' created, body "' + message.body + '"')
 				res.setHeader('Content-Type', 'application/xml')
 				res.status(200).end()
-		 })
+			})
 
 		})
 
-	}).catch(function(err){
-  	console.log(req.direction + 'create chat message failed: %s', JSON.stringify(err, Object.getOwnPropertyNames(err)))
- 		res.setHeader('Content-Type', 'application/xml')
- 		res.status(500).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
- })
+	}).catch(function (err) {
+		console.log(req.direction + 'create chat message failed: %s', JSON.stringify(err, Object.getOwnPropertyNames(err)))
+		res.setHeader('Content-Type', 'application/xml')
+		res.status(500).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
+	})
 
 }
 
@@ -62,11 +62,11 @@ module.exports.retrieveChannel = function (req) {
 
 		console.log(req.direction + 'retrieve channel via API for user ', req.body.From)
 
-		return service.channels('support_channel_' + req.body.From).get().then(function(channel){
+		return service.channels('support_channel_' + req.body.From).get().then(function (channel) {
 			resolve(channel)
 		}).catch(function (err) {
 			console.error(req.direction + 'retrieve channel failed: %s', JSON.stringify(err, Object.getOwnPropertyNames(err)))
-			return module.exports.createChannel(req).then(function(channel){
+			return module.exports.createChannel(req).then(function (channel) {
 				resolve(channel)
 			})
 		})
@@ -75,7 +75,8 @@ module.exports.retrieveChannel = function (req) {
 
 }
 
-module.exports.createChannel = function(req) {
+module.exports.createChannel = function (req) {
+
 	return new Promise(function (resolve, reject) {
 
 		async.waterfall([
@@ -86,10 +87,10 @@ module.exports.createChannel = function(req) {
 					friendlyName: 'Support Chat with ' + req.body.From,
 					uniqueName: 'support_channel_' + req.body.From,
 					attributes: JSON.stringify({ forwarding: true})
-				}).then(function(channel) {
+				}).then(function (channel) {
 					console.log(req.direction + 'channel ' + channel.sid + ' created')
 					callback(null, channel)
-				}).catch(function(err) {
+				}).catch(function (err) {
 					console.error(req.direction + 'create channel failed: %s', JSON.stringify(err, Object.getOwnPropertyNames(err)))
 					callback(err)
 				})
@@ -98,76 +99,75 @@ module.exports.createChannel = function(req) {
 
 				service.channels(channel.sid).members.create({
 					identity: req.body.From
-				}).then(function(identity) {
+				}).then(function (identity) {
 					console.log(req.direction + 'added member ' + identity.sid  + '(' + req.body.From + ') to channel ' + channel.sid)
 					callback(null, channel)
-				}).fail(function(err) {
+				}).fail(function (err) {
 					console.error(req.direction + 'added member ' + req.body.From + ' to channel ' + channel.sid + 'failed: %s', JSON.stringify(err, Object.getOwnPropertyNames(err)))
 					callback(err)
 				})
 
 			}, function (channel, callback) {
 
-				module.exports.createTask(req, channel).then(function (task){
+				module.exports.createTask(req, channel).then(function (task) {
 					callback(null, channel)
-				}).catch(function(error){
+				}).catch(function (error) {
 					callback(error)
 				})
 
 			}
-			], function (err, payload) {
-
-				if (err) {
-					reject(err)
-				} else {
-					resolve(payload)
-				}
-
+		], function (err, channel) {
+			if (err) {
+				reject(err)
+			} else {
+				resolve(channel)
 			}
-		)
-
-	})
-}
-
-module.exports.getOngoingTasks = function(name) {
-	return new Promise(function (resolve, reject) {
-
- 		var query = {}
-		query.AssignmentStatus = 'pending,assigned,reserved'
-		query.TargetWorkersExpression = 'name ="' + name + '"'
-
-		taskrouterClient.workspace.tasks.list(query, function (err, data){
-			if(err){	
-				return reject(err)
-			} 
-
-			return resolve(data.tasks)
-
 		})
 
 	})
+
+}
+
+module.exports.getOngoingTasks = function (name) {
+
+	return new Promise(function (resolve, reject) {
+		var query = {}
+		query.AssignmentStatus = 'pending,assigned,reserved'
+		query.TargetWorkersExpression = 'name ="' + name + '"'
+
+		taskrouterClient.workspace.tasks.list(query, function (err, data) {
+			if (err) {
+				return reject(err)
+			}
+
+			return resolve(data.tasks)
+		})
+
+	})
+
 }
 
 module.exports.createTask = function (req, channel) {
-	return new Promise(function (resolve, reject) {
-		
-    var type = null;
-    var text = null;
 
-		if(req.body.From.includes('Messenger')){
-			type = 'Facebook Messenger request'
+	return new Promise(function (resolve, reject) {
+		var title = null
+		var text = null
+		var chatPlatform = null
+
+		if (req.body.From.includes('Messenger')) {
+			title = 'Facebook Messenger request' // FIXME rename to title
 			text = 'Customer requested support on Faceboook'
 		} else {
-			type = 'SMS request'
+			title = 'SMS request' // TODO make phone number clickable
 			text = 'Customer requested support by sending SMS'
 		}
 
 		taskrouterClient.workspace.tasks.create({
 			workflowSid: req.configuration.twilio.workflowSid,
 			attributes: JSON.stringify({
-				type: type,
+				title: title,
 				text: text,
-				channel: 'chat',
+				channel: 'chat', // types:  web_chat, sms_chat, facebook_chat
 				team: 'support',
 				name: req.body.From,
 				channelSid: channel.sid
@@ -183,11 +183,12 @@ module.exports.createTask = function (req, channel) {
 		})
 
 	})
+
 }
 
-module.exports.forwardChannel = function(channel, req) {
+module.exports.forwardChannel = function (channel, req) {
 
-	return service.channels(channel.sid).members.list().then(function (data) { 
+	return service.channels(channel.sid).members.list().then(function (data) {
 
 		return new Promise(function (resolve, reject) {
 			console.log(req.direction + 'channel ' + channel.sid + ' has ' + data.members.length + ' member(s)')
@@ -195,22 +196,23 @@ module.exports.forwardChannel = function(channel, req) {
 			async.each(data.members, function (member, callback) {
 
 				/* never forward message the user who created it */
-				if(req.body.From == member.identity){
+				if (req.body.From === member.identity) {
 					return callback()
 				}
 
 				console.log(req.direction + 'forward message "' + req.body.Body + '" to identity ' + member.identity)
 
-				module.exports.forwardMessage(member.identity, req.body.Body, req).then(function (message){
+				module.exports.forwardMessage(member.identity, req.body.Body, req).then(function (message) {
 					callback()
-				}).catch(function(err){
+				}).catch(function (err) {
 					callback(err)
 				})
 
 			}, function (err) {
-				if(err){
+				if (err) {
 					return reject(err)
 				}
+
 				resolve()
 			})
 
@@ -220,23 +222,22 @@ module.exports.forwardChannel = function(channel, req) {
 }
 
 module.exports.forwardMessage = function (to, body, req) {
-	return new Promise(function (resolve, reject) {
-		var from	
 
-		if(to.includes('Messenger')){
+	return new Promise(function (resolve, reject) {
+		var from
+
+		if (to.includes('Messenger')) {
 			from = 'Messenger:' + req.configuration.twilio.facebookPageId
 		} else {
 			from = req.configuration.twilio.callerId
 		}
-console.log({to: to, 
-			from: from, 
-			body: body})
+
 		client.messages.create({
-			to: to, 
-			from: from, 
+			to: to,
+			from: from,
 			body: body
-		}, function(err, message) { 
-			if(err) {
+		}, function (err, message) {
+			if (err) {
 				console.error(req.direction + ' sending message failed: %s', JSON.stringify(err, Object.getOwnPropertyNames(err)))
 				reject(err)
 			} else {
@@ -246,6 +247,7 @@ console.log({to: to,
 		})
 
 	})
+
 }
 
 module.exports.outbound = function (req, res) {
@@ -253,18 +255,18 @@ module.exports.outbound = function (req, res) {
 
 	console.log(req.direction + 'request received: %j', req.body)
 
-	service.channels(req.body.ChannelSid).get().then(function (channel){
+	service.channels(req.body.ChannelSid).get().then(function (channel) {
 		console.log(req.direction + 'channel ' + channel.sid + ' received')
 
 		var attributes = JSON.parse(channel.attributes)
 
-		if(!attributes.forwarding){
+		if (!attributes.forwarding) {
 			console.log(req.direction + 'channel ' + channel.sid + ' needs no forwarding')
 			res.status(200).end()
 		} else {
-			
-			return module.exports.forwardChannel(channel, req).then(function (){
-			}).then(function(){
+
+			return module.exports.forwardChannel(channel, req).then(function () {
+			}).then(function () {
 				console.log(req.direction + 'message forwarding for channel ' + channel.sid + ' done')
 				res.setHeader('Content-Type', 'application/xml')
 				res.status(200).end()
@@ -272,7 +274,7 @@ module.exports.outbound = function (req, res) {
 
 		}
 
-	}).catch(function(err) {
+	}).catch(function (err) {
 		console.log(req.direction + 'forwarding chat message failed: %s', JSON.stringify(err, Object.getOwnPropertyNames(err)))
 		res.setHeader('Content-Type', 'application/xml')
 		res.status(500).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
