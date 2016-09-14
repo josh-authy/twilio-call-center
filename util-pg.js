@@ -1,6 +1,10 @@
 var pg = require('pg')
 var uc = require('./util-common.js')
 
+module.exports.convertToString = function (err) {
+	return uc.convertToString(err)
+}
+
 module.exports.generateSessionExirationDate = function (seconds) {
 	return uc.generateSessionExirationDate(seconds)
 }
@@ -39,16 +43,18 @@ exports.setConfiguration = function (configuration, callback) {
 				return callback (err)
 			} else {
 
-				client.query('INSERT INTO configuration(data) values($1)', [configurationAsString], function (err, result) {
-					done()
+				client.query('INSERT INTO configuration(data) values($1)', [configurationAsString],
+					function (err, result) {
+						done()
 
-					if (err) {
-						callback(err)
-					} else {
-						callback(null)
+						if (err) {
+							callback(err)
+						} else {
+							callback(null)
+						}
+
 					}
-
-				})
+				)
 
 			}
 

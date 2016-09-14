@@ -1,6 +1,10 @@
 var fs = require('fs')
 var uc = require('./util-common.js')
 
+module.exports.convertToString = function (err) {
+	return uc.convertToString(err)
+}
+
 module.exports.generateSessionExirationDate = function (seconds) {
 	return uc.generateSessionExirationDate(seconds)
 }
