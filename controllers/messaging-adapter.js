@@ -155,7 +155,7 @@ module.exports.createTask = function (req, channel) {
 		var chatPlatform = null
 
 		if (req.body.From.includes('Messenger')) {
-			title = 'Facebook Messenger request' // FIXME rename to title
+			title = 'Facebook Messenger request'
 			text = 'Customer requested support on Faceboook'
 		} else {
 			title = 'SMS request' // TODO make phone number clickable

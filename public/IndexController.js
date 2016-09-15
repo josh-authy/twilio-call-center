@@ -10,15 +10,11 @@ app.controller('IndexController', function ($scope, $http) {
     $http.get('/api/setup/validate')
 
       .then(function onSuccess(response) {
-
         $scope.setup = 'VALID';
         $scope.code = null;
-
       }, function onError(response) { 
-
         $scope.setup = 'INVALID';
         $scope.code = response.data.code;
-
       });
 
   };

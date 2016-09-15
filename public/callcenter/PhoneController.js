@@ -99,19 +99,19 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 
    if($scope.connection){
     $scope.connection.sendDigits(digit);
-  }
+    }
 
-};
+  };
 
-$scope.$on('CallPhoneNumber', function(event, data) { 
+  $scope.$on('CallPhoneNumber', function(event, data) { 
 
-  $log.log('call: ' + data.phoneNumber);
-  $scope.phoneNumber = data.phoneNumber;
+    $log.log('call: ' + data.phoneNumber);
+    $scope.phoneNumber = data.phoneNumber;
 
-  Twilio.Device.connect({'phone': data.phoneNumber});
+    Twilio.Device.connect({'phone': data.phoneNumber});
 
-  $scope.state = 'isActive';
+    $scope.state = 'isActive';
 
-});
+  });
 
 });      
