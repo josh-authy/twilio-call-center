@@ -173,7 +173,7 @@ module.exports.createOrUpdateQueue = function (queue, callback) {
 
 	if (queue.sid) {
 
-		client.workspace.taskQueues(queue.sid).update(queue, function (err) {
+		taskrouterClient.workspace.taskQueues(queue.sid).update(queue, function (err) {
 			if (err) {
 				callback(err)
 			} else {
@@ -183,7 +183,7 @@ module.exports.createOrUpdateQueue = function (queue, callback) {
 
 	} else  {
 
-		client.workspace.taskQueues.create(queue, function (err, queueFromApi) {
+		taskrouterClient.workspace.taskQueues.create(queue, function (err, queueFromApi) {
 			if (err) {
 				callback(err)
 			} else {
@@ -207,7 +207,7 @@ module.exports.createOrUpdateWorkflow = function (workflow, callback) {
 
 	} else  {
 
-		client.workspace.workflows.create(workflow, function (err, workflowFromApi) {
+		taskrouterClient.workspace.workflows.create(workflow, function (err, workflowFromApi) {
 			if (err) {
 				callback(err)
 			} else {
