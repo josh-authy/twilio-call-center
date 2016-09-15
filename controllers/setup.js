@@ -165,12 +165,6 @@ module.exports.syncQueues = function (config, callback) {
 }
 
 module.exports.createOrUpdateQueue = function (queue, callback) {
-	var client = new twilio.TaskRouterClient(
-		process.env.TWILIO_ACCOUNT_SID,
-		process.env.TWILIO_AUTH_TOKEN,
-		process.env.TWILIO_WORKSPACE_SID
-	)
-
 	if (queue.sid) {
 
 		taskrouterClient.workspace.taskQueues(queue.sid).update(queue, function (err) {
@@ -257,8 +251,8 @@ module.exports.updateInboundPhoneNumber = function (req, config, callback) {
 	var voiceUrl 	=  req.protocol + '://' + req.hostname + '/api/ivr/welcome'
 	var smsUrl 		=  req.protocol + '://' + req.hostname + '/api/messaging-adapter/inbound'
 
-	// no call sid was provided, skip phone number configuration
-	if(!req.body.sid){
+	// if no call sid was provided, skip phone number configuration
+	if (!req.body.sid) {
 		return callback(null)
 	}
 
