@@ -48,9 +48,8 @@ async.waterfall([
 		});
 
 	}, function (client, configuration, callback) {
-			console.log('sss')
-		console.log(configuration)
-		client.query('INSERT INTO configuration(data) values($1)', [configuraton],
+
+		client.query('INSERT INTO configuration(data) values($1)', [configuration],
 			function (err, result) {
 				if (err) {
 					callback(err)
