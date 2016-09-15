@@ -1,6 +1,7 @@
 const async 	= require('async')
 const pg    	= require('pg')
 const fs 			= require('fs')
+const path 		= require('path');
 
 async.waterfall([
 
@@ -39,15 +40,16 @@ async.waterfall([
 	}, function (client, callback) {
 
 		/* load configuration template */
-		fs.readFile('./configuration.json', 'utf8', function (err, data) {
+		fs.readFile(path.join(process.cwd(), './configuration.json'), 'utf8', function (err, data) {
 		  if (err) {
 		    callback(err)
 		  }
+		  		console.log(data)
 		  callback(null, client, data)
 		});
 
 	}, function (client, configuration, callback) {
-		
+		console.log(configuration)
 		client.query('INSERT INTO configuration(data) values($1)', [configuraton],
 			function (err, result) {
 				if (err) {
