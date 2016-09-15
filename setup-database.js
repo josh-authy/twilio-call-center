@@ -1,7 +1,9 @@
 const async 	= require('async')
 const pg    	= require('pg')
 const fs 			= require('fs')
-const path 		= require('path');
+const path 		= require('path')
+
+var configuration
 
 async.waterfall([
 
@@ -44,11 +46,11 @@ async.waterfall([
 		  if (err) {
 		    callback(err)
 		  }
-		  		console.log(data)
-		  callback(null, client, data)
+		  configuration = data
+		  callback(null, client)
 		});
 
-	}, function (client, configuration, callback) {
+	}, function (client, callback) {
 		console.log(configuration)
 		client.query('INSERT INTO configuration(data) values($1)', [configuraton],
 			function (err, result) {
