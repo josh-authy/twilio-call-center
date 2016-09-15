@@ -152,7 +152,6 @@ module.exports.createTask = function (req, channel) {
 	return new Promise(function (resolve, reject) {
 		var title = null
 		var text = null
-		var chatPlatform = null
 
 		if (req.body.From.includes('Messenger')) {
 			title = 'Facebook Messenger request'
