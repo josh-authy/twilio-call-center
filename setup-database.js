@@ -41,11 +41,11 @@ async.waterfall([
 
 		/* load configuration template */
 		fs.readFile(path.join(process.cwd(), './configuration.json'), 'utf8', function (err, data) {
-		  if (err) {
-		    callback(err)
-		  }
-		  callback(null, client, data)
-		});
+			if (err) {
+				callback(err)
+			}
+			callback(null, client, data)
+		})
 
 	}, function (client, configuration, callback) {
 
