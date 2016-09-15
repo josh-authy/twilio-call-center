@@ -257,6 +257,11 @@ module.exports.updateInboundPhoneNumber = function (req, config, callback) {
 	var voiceUrl 	=  req.protocol + '://' + req.hostname + '/api/ivr/welcome'
 	var smsUrl 		=  req.protocol + '://' + req.hostname + '/api/messaging-adapter/inbound'
 
+	// no call sid was provided, skip phone number configuration
+	if(!req.body.sid){
+		return callback(null)
+	}
+
 	client.incomingPhoneNumbers(req.body.sid).update({
 		voiceUrl: voiceUrl,
 		voiceMethod: 'GET',
