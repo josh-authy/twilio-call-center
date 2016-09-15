@@ -46,7 +46,7 @@ async.waterfall([
 		  callback(null, client, data)
 		});
 
-	}, function (client configuration, callback) {
+	}, function (client, configuration, callback) {
 		
 		client.query('INSERT INTO configuration(data) values($1)', [configuraton],
 			function (err, result) {
