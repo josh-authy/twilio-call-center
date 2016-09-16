@@ -380,7 +380,7 @@
   left:auto;
 }
 
-.message .author .footer
+.message .footer
 {
 	overflow:auto;
 	clear: both;
