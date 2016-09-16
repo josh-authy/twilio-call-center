@@ -64,7 +64,7 @@ app.controller('SetupController', function ($scope, $http, $q) {
     var verifyPhoneNumber = function() {
       var deferred = $q.defer();
 
-      $http.post('/api/setup/verify-phone-number', { callerId: $scope.configuration.twilio.callerId }).then(function(response){
+      $http.post('/api/validate/phone-number', { callerId: $scope.configuration.twilio.callerId }).then(function(response){
         deferred.resolve(response.data);
       }, function(error) {
         deferred.reject(error);

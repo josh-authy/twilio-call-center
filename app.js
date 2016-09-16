@@ -48,10 +48,13 @@ var setup = require('./controllers/setup.js')
 
 router.route('/setup').get(setup.get)
 router.route('/setup').post(setup.update)
-router.route('/setup/validate').get(setup.validate)
 router.route('/setup/workspace').get(setup.getWorkspace)
 router.route('/setup/activities').get(setup.getActivities)
-router.route('/setup/verify-phone-number').post(setup.verifyPhoneNumber)
+
+var validate = require('./controllers/validate.js')
+
+router.route('/validate/setup').post(validate.validateSetup)
+router.route('/validate/phone-number').post(validate.validatePhoneNumber)
 
 var tasks = require('./controllers/tasks.js')
 
@@ -73,14 +76,14 @@ router.route('/ivr/welcome').get(ivr.welcome)
 router.route('/ivr/select-team').get(ivr.selectTeam)
 router.route('/ivr/create-task').get(ivr.createTask)
 
-/* routes called by the Twilio Taskrouter */
+/* routes called by the Twilio TaskRouter */
 var taskrouter = require('./controllers/taskrouter.js')
 
 router.route('/taskrouter/assignment').post(taskrouter.assignment)
 
 var workers = require('./controllers/workers.js')
 
-router.route('/workers').get(workers.list) // agents
+router.route('/workers').get(workers.list)
 router.route('/workers').post(workers.create)
 router.route('/workers/:id').delete(workers.delete)
 
