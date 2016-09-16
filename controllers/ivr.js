@@ -11,7 +11,8 @@ const taskrouterClient = new twilio.TaskRouterClient(
 module.exports.welcome = function (req, res) {
 	var twiml = new twilio.TwimlResponse()
 
-	twiml.gather({ action: 'select-team',
+	twiml.gather({ 
+		action: 'select-team',
 		method: 'GET',
 		numDigits: 1,
 		timeout: 10
@@ -65,7 +66,7 @@ module.exports.selectTeam = function (req, res) {
 		twiml.enqueue({ workflowSid: req.configuration.twilio.workflowSid }, function (node) {
 			node.task(JSON.stringify(attributes), {
 				priority: 1,
-				timeout: 1200
+				timeout: 3600
 			})
 		})
 
