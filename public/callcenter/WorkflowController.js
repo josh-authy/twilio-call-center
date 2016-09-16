@@ -99,6 +99,14 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
       $log.log(reservation);
 
       $scope.task = reservation.task;
+
+      /* check if the customer name is a phone number */
+      var pattern = /(.*)(\+[0-9]{8,20})(.*)$/;
+
+      if (pattern.test($scope.task.attributes.name) == true) {
+        $scope.task.attributes.nameIsPhoneNumber = true;
+      }  
+
       $scope.task.completed = false;
       $scope.reservation = null;
       $scope.stopReservationCounter();
@@ -233,6 +241,10 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 
     });
 
+  };
+
+  $scope.callPhoneNumber = function(phoneNumber){
+    $rootScope.$broadcast('CallPhoneNumber', { phoneNumber: phone });
   };
 
   $scope.logout = function () {
