@@ -94,11 +94,11 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 
   $scope.addDigit = function(digit){
 
-   $log.log('send digit: ' + digit);
-   $scope.phoneNumber = $scope.phoneNumber + digit;
+    $log.log('send digit: ' + digit);
+    $scope.phoneNumber = $scope.phoneNumber + digit;
 
-   if($scope.connection){
-    $scope.connection.sendDigits(digit);
+    if($scope.connection){
+      $scope.connection.sendDigits(digit);
     }
 
   };

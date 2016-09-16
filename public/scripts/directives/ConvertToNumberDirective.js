@@ -1,4 +1,5 @@
 app.directive('convertToNumber', function() {
+ 
   return {
     require: 'ngModel',
     link: function(scope, element, attrs, ngModel) {
@@ -11,4 +12,5 @@ app.directive('convertToNumber', function() {
       });
     }
   };
+  
 });

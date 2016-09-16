@@ -11,7 +11,7 @@ const taskrouterClient = new twilio.TaskRouterClient(
 module.exports.welcome = function (req, res) {
 	var twiml = new twilio.TwimlResponse()
 
-	twiml.gather({ 
+	twiml.gather({
 		action: 'select-team',
 		method: 'GET',
 		numDigits: 1,

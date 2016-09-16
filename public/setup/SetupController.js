@@ -91,7 +91,7 @@ app.controller('SetupController', function ($scope, $http, $q) {
     verifyPhoneNumber().then(function(phoneNumber){
 
       return saveConfiguration(phoneNumber.sid, $scope.configuration).then(function(){
-         $scope.isSaving = false;
+        $scope.isSaving = false;
         $scope.phoneNumber = { isValid: true, message: null, code: null};
       });
 

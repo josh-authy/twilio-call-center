@@ -91,7 +91,7 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
     var worker =  { 
       friendlyName:  $scope.agent.friendlyName, 
       attributes: JSON.stringify(attributes) 
-    } ;
+    };
 
     $http.post('/api/workers', worker)
 
