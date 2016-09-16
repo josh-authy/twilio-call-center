@@ -133,7 +133,7 @@ module.exports.getOngoingTasks = function (name) {
 	return new Promise(function (resolve, reject) {
 		var query = {}
 		query.AssignmentStatus = 'pending,assigned,reserved'
-		query.TargetWorkersExpression = 'name ="' + name + '"'
+		query.EvaluateTaskAttributes = 'name=\'' + name + '\''
 
 		taskrouterClient.workspace.tasks.list(query, function (err, data) {
 			if (err) {
@@ -150,15 +150,18 @@ module.exports.getOngoingTasks = function (name) {
 module.exports.createTask = function (req, channel) {
 
 	return new Promise(function (resolve, reject) {
-		var title = null
-		var text = null
+		var title 		= null
+		var text 			= null
+		var endpoint	= null
 
 		if (req.body.From.includes('Messenger')) {
-			title = 'Facebook Messenger request'
-			text = 'Customer requested support on Faceboook'
+			title 		= 'Facebook Messenger request'
+			text 			= 'Customer requested support on Faceboook'
+			endpoint 	= 'messenger'
 		} else {
-			title = 'SMS request' // TODO make phone number clickable
-			text = 'Customer requested support by sending SMS'
+			title 		= 'SMS request'
+			text 			= 'Customer requested support by sending SMS'
+			endpoint 	= 'sms'
 		}
 
 		taskrouterClient.workspace.tasks.create({
@@ -166,7 +169,8 @@ module.exports.createTask = function (req, channel) {
 			attributes: JSON.stringify({
 				title: title,
 				text: text,
-				channel: 'chat', // types:  web_chat, sms_chat, facebook_chat
+				channel: 'chat',
+				endpoint: endpoint,
 				team: 'support',
 				name: req.body.From,
 				channelSid: channel.sid

@@ -81,6 +81,7 @@ module.exports.createChat = function (req, res) {
 					title: 'Chat request',
 					text: 'Customer entered chat via support page',
 					channel: 'chat',
+					endpoint: 'web',
 					team: 'support',
 					name: payload.identity,
 					channelSid: payload.channelSid
