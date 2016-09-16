@@ -30,7 +30,7 @@ app.controller('SetupController', function ($scope, $http, $q) {
         $scope.activities = response.data;
         deferred.resolve();
       }, function(response) {
-        deferred.reject('The application could not access the your Twilio Taskrouter workspace activities please verify the Workspace Sid.');
+        deferred.reject('The application could not access the your Twilio TaskRouter workspace activities please verify the Workspace Sid.');
       });
       return deferred.promise;
 
@@ -92,6 +92,7 @@ app.controller('SetupController', function ($scope, $http, $q) {
 
       return saveConfiguration(phoneNumber.sid, $scope.configuration).then(function(){
          $scope.isSaving = false;
+        $scope.phoneNumber = { isValid: true, message: null, code: null};
       });
 
     }).catch(function(error) {
@@ -104,29 +105,3 @@ app.controller('SetupController', function ($scope, $http, $q) {
   };
 
 });  
-
-app.directive('phoneNumber', function () {
-
-  var pattern = /^\+[0-9]{8,20}$/;
-
-  return {
-    require: 'ngModel',
-    link: function (scope, element, attrs, ctrl) {
-
-      ctrl.$validators.integer = function (ngModelValue) {
-        if(ngModelValue == undefined || ngModelValue == null){
-          ctrl.$setValidity('invalidPhone', true);
-          return ngModelValue;
-        }
-        if (pattern.test(ngModelValue) == false) {
-          ctrl.$setValidity('invalidPhone', false);
-          return ngModelValue;
-        }
-
-        ctrl.$setValidity('invalidPhone', true);
-        return ngModelValue;
-
-      };
-    }
-  };
-});
