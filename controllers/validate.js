@@ -31,10 +31,10 @@ module.exports.validateSetup = function (req, res) {
 
 	validateAccount()
 		.then(validateWorkspace)
-		.then(function(){
+		.then(function () {
 			return validateApplication(req.configuration.twilio.applicationSid)
 		})
-		.then(function(){
+		.then(function () {
 			return res.status(200).end()
 		}).catch(function (err) {
 			console.log(err)
@@ -46,7 +46,7 @@ module.exports.validateSetup = function (req, res) {
 var validateApplication = function (applicationSid) {
 
 	return new Promise(function (resolve, reject) {
-	
+
 		if (!applicationSid) {
 			return reject('TWILIO_APPLICATION_SID_INVALID')
 		}
@@ -102,7 +102,7 @@ module.exports.validatePhoneNumber = function (req, res) {
 
 	client.incomingPhoneNumbers.list(filter, function (err, data) {
 		if (err) {
-			return res.status(500).json({ code: 'TWILIO_UNKNOWN_ERROR', message: util.convertToString(err)})
+			return res.status(500).json({ code: 'TWILIO_UNKNOWN_ERROR', message: req.util.convertToString(err)})
 		}
 
 		/* phone number not found */

@@ -29,13 +29,15 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }))
 
+
 app.use(function (req, res, next) {
 
-	util.getConfiguration(function (error, configuration) {
-		if (error) {
-			res.status(500).json({stack: error.stack, message: error.message})
+	util.getConfiguration(function (err, configuration) {
+		if (err) {
+			res.status(500).json({stack: err.stack, message: err.message})
 		} else {
 			req.configuration = configuration
+			req.util = util
 			next()
 		}
 	})
