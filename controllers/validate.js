@@ -30,8 +30,10 @@ module.exports.validateSetup = function (req, res) {
 	}
 
 	validateAccount()
-		.then(validateWorkspace)
-		.then(function () {
+		.then(function (result) {
+			return validateWorkspace()
+		})
+		.then(function (result) {
 			return validateApplication(req.configuration.twilio.applicationSid)
 		})
 		.then(function () {
