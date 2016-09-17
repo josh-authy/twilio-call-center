@@ -26,6 +26,15 @@ module.exports.inbound = function (req, res) {
 
 	console.log(req.direction + 'request received: %j', req.body)
 
+	/* basic request body validation */
+	if (!req.body.From) {
+		return res.status(500).json({ message: 'Invalid request body. "From" is required' })
+	}
+
+	if (!req.body.Body) {
+		return res.status(500).json({ message: 'Invalid request body. "Body" is required' })
+	}
+
 	module.exports.retrieveChannel(req).then(function (channel) {
 		console.log(req.direction + 'channel ' + channel.sid + ' received')
 
@@ -68,6 +77,8 @@ module.exports.retrieveChannel = function (req) {
 			console.error(req.direction + 'retrieve channel failed: %s', JSON.stringify(err, Object.getOwnPropertyNames(err)))
 			return module.exports.createChannel(req).then(function (channel) {
 				resolve(channel)
+			}).catch(function (err) {
+				reject(err)
 			})
 		})
 
@@ -102,7 +113,7 @@ module.exports.createChannel = function (req) {
 				}).then(function (identity) {
 					console.log(req.direction + 'added member ' + identity.sid  + '(' + req.body.From + ') to channel ' + channel.sid)
 					callback(null, channel)
-				}).fail(function (err) {
+				}).catch(function (err) {
 					console.error(req.direction + 'added member ' + req.body.From + ' to channel ' + channel.sid + 'failed: %s', JSON.stringify(err, Object.getOwnPropertyNames(err)))
 					callback(err)
 				})
