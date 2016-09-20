@@ -14,10 +14,10 @@ test:
     - echo "test"
 
 
-# Deploying to Surge
+# Deploying to Heroku
 deployment:
-  production:
+  staging:
     branch: authy
-    commands:
-      - npm install
-      - node app.js
+    heroku:
+      appname: stark-hamlet-32722
+
