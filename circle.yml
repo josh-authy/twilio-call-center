@@ -19,5 +19,4 @@ deployment:
   production:
     branch: authy
     commands:
-      - npm install
-      - node app.js
+      - echo "noop"
