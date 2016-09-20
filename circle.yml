@@ -1,0 +1,23 @@
+# See https://circleci.com/docs/configuration
+# Setup dependencies
+machine:
+  environment:
+    PORT: 5000
+
+dependencies:
+  override:
+    - npm install
+
+# Example of how to skip tests.
+test:
+  override:
+    - echo "test"
+
+
+# Deploying to Surge
+deployment:
+  production:
+    branch: authy
+    commands:
+      - npm install
+      - node app.js
