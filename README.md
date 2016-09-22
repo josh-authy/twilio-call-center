@@ -115,6 +115,8 @@ git rebase -i HEAD^^^^^^
 git push origin [YOUR BRANCH] -f
 ```
 
+# Continuous Integration
+We use CircleCI
 
 # License
 
