@@ -7,8 +7,10 @@ const client = new Client({key: process.env.AUTHY_API_KEY});
 
 module.exports.requestToken = function (req, res) {
 	var authyId = req.body.authyId;
-
-    client.requestSms({authyId: authyId}, function (err, authyres) {
+    var forceVal = Boolean(req.body.force) || false;
+    console.log(authyId);
+    console.log(forceVal);
+    client.requestSms({authyId: authyId}, {force: forceVal}, function (err, authyres) {
 
         if (err) {
             console.log('error: ', err);
@@ -29,17 +31,13 @@ module.exports.verifyToken = function (req, res) {
             console.log('Verify Token Error Response ', err);
             res.status(500).send({'error': err});
         } else if (!authyResponse.success) {
-            userSockets[user.username].emit('tokenDenied', {'error': authyResponse});
+            console.log('token failure')
+            res.status(500).json({"failure": "Token Invalid"});
         } else {
             console.log('token success');
-            userSockets[user.username].emit('tokenSuccess', {'transType': transType});
+            res.status(200).json({"success": "Token Valid"});
         }
-        res.status(200).send('token verification processed');
     });
-};
-
-module.exports.entry = function (req, res) {
-
 };
 
 
