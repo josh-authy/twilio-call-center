@@ -1,5 +1,5 @@
 'use strict'
-
+const authy = require('authy')('');
 const twilio = require('twilio')
 
 /* client for Twilio TaskRouter */
@@ -25,13 +25,43 @@ module.exports.create = function (req, res) {
 		friendlyName: req.body.friendlyName,
 		attributes: req.body.attributes
 	}
+	console.log('body ' , req.body);
+	console.log('worker ' , worker.attributes);
+	
+	if (worker.attributes.phone && worker.attributes.phone.length > 0){
+		//register phone with Authy
+		console.log('about to reg for authy');
+		console.log('phone ' , worker.attributes.phone)
+	
+	    authy.register_user(req.body.friendlyName + '@' + process.env.TWILIO_WORKSPACE_SID + '.com', worker.attributes.phone, '+1', function (err, authyres) {
 
-	taskrouterClient.workspace.workers.create(worker)
+	        if (err) {
+	            console.log('AUTHY ERROR: ' , err);
+	        } else {
+				console.log('authy result ', authyres);
+	        	worker.attributes.authyId = authyres.user.id;
+				worker.attributes = JSON.stringify(worker.attributes);
+				taskrouterClient.workspace.workers.create(worker)
+				.then(function (worker) {
+					res.status(200).json(worker)
+				}).catch(function (err) {
+					res.status(500).json(err)
+				})
+				
+	        }
+	    })
+	} else {
+		worker.attributes = JSON.stringify(worker.attributes);
+		taskrouterClient.workspace.workers.create(worker)
 		.then(function (worker) {
 			res.status(200).json(worker)
 		}).catch(function (err) {
 			res.status(500).json(err)
 		})
+		
+	}
+	
+
 
 }
 

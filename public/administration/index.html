@@ -28,6 +28,7 @@
            <thead>
             <tr >
               <th>Name</th>
+              <th>Phone</th>
               <th>Status</th>
               <th>Channel(s)</th>
               <th>Team</th>
@@ -37,6 +38,7 @@
           <tbody>
            <tr ng-repeat="worker in workers track by worker.sid">
             <td>{{worker.friendlyName}}</td>
+            <td>{{worker.phone}}</td>
             <td>{{worker.activityName}}</td>
             <td>{{worker.channelsFriendlyName}}</td>
             <td>{{worker.team}}</td>
@@ -58,9 +60,12 @@
 
             <div class="form-group">
               <label><b>Name&nbsp;&nbsp;&nbsp;</b></label>
-              <input  ng-model="agent.friendlyName" name="friendlyName" type="text" class="form-control" client-name required>&nbsp;&nbsp;&nbsp;
+              <input  ng-model="agent.friendlyName" name="friendlyName" type="text" class="form-control input-sm" client-name required>&nbsp;&nbsp;&nbsp;
+			</div>
+            <div class="form-group">
+			  <label><b>Phone&nbsp;&nbsp;&nbsp;</b></label>
+              <input  ng-model="agent.phone" name="phone" type="text" class="form-control input-sm" client-phone>&nbsp;&nbsp;&nbsp;
             </div>
-
             <div class="form-group">
              <label class="checkbox-inline">
               <input type="checkbox" checklist-model="agent.channels" value="phone">Phone

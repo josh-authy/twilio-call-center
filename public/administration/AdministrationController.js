@@ -61,6 +61,8 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
           }
 
         }    
+		
+		worker.phone =worker.attributes.phone;
     
         $scope.workers.push(worker);
 
@@ -85,12 +87,13 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
     var attributes = { 
       contact_uri: 'client:' + $scope.agent.friendlyName.toLowerCase(), 
       channels: $scope.agent.channels, 
-      team: $scope.agent.team
+      team: $scope.agent.team,
+	  phone: $scope.agent.phone
     };
 
     var worker =  { 
       friendlyName:  $scope.agent.friendlyName, 
-      attributes: JSON.stringify(attributes) 
+      attributes: attributes
     };
 
     $http.post('/api/workers', worker)
