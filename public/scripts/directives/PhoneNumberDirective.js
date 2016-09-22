@@ -6,6 +6,7 @@ app.directive('phoneNumber', function () {
       link: function (scope, element, attrs, ctrl) {
 
         ctrl.$validators.integer = function (ngModelValue) {
+//  		  debugger;
           if(ngModelValue == undefined || ngModelValue == null){
             ctrl.$setValidity('invalidPhone', true);
             return ngModelValue;

@@ -2,6 +2,7 @@
 const config = require('../config')
 const authy = require('authy')(config.AUTHY_API_KEY)
 const twilio = require('twilio')
+const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
 
 /* client for Twilio TaskRouter */
 const taskrouterClient = new twilio.TaskRouterClient(
@@ -31,13 +32,14 @@ module.exports.create = function (req, res) {
 	
 	if (worker.attributes.phone && worker.attributes.phone.length > 0){
 		//register phone with Authy
-		console.log('about to reg for authy');
-		console.log('phone ' , worker.attributes.phone)
+		console.log('about to reg for authy ' , worker.attributes.phone);
+		var countryCode = phoneUtil.parse(worker.attributes.phone).getCountryCode();
+		console.log('country code ', countryCode);
 	
-	    authy.register_user(req.body.friendlyName + '@' + process.env.TWILIO_WORKSPACE_SID + '.com', worker.attributes.phone, '+1', function (err, authyres) {
-
+	    authy.register_user(req.body.friendlyName + '@' + process.env.TWILIO_WORKSPACE_SID + '.com', worker.attributes.phone, countryCode, function (err, authyres) {
 	        if (err) {
 	            console.log('AUTHY ERROR: ' , err);
+				res.status(500).json('Authy: ' + err.message);
 	        } else {
 				console.log('authy result ', authyres);
 	        	worker.attributes.authyId = authyres.user.id;
@@ -59,11 +61,7 @@ module.exports.create = function (req, res) {
 		}).catch(function (err) {
 			res.status(500).json(err)
 		})
-		
 	}
-	
-
-
 }
 
 module.exports.list = function (req, res) {

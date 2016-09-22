@@ -32,8 +32,8 @@ module.exports.login = function (req, res) {
 				if(info.authyId){
 					res.status(200).json({authyId: info.authyId, worker: worker});
 				} else {
-					// createTokens(req, worker);
 
+					console.log('no authy ID');
 					/* create a token for taskrouter */
 					var workerCapability = new twilio.TaskRouterWorkerCapability(
 						process.env.TWILIO_ACCOUNT_SID,
@@ -75,7 +75,9 @@ module.exports.login = function (req, res) {
 
 					req.session.tokens = tokens
 					req.session.worker = worker
-					res.status(200).json({authyId: false});
+					res.status(200).end();
+
+					// res.status(200).json({authyId: false});
 				}
 				return
 			}
@@ -149,6 +151,7 @@ module.exports.verifyToken = function (req, res) {
 			res.status(500).json({"failure": "Token Invalid"})
 		} else {
 
+			console.log("Token Valid");
 			var friendlyName = req.body.worker.friendlyName
 			var lifetime = 3600
 
@@ -194,7 +197,7 @@ module.exports.verifyToken = function (req, res) {
 			req.session.tokens = tokens
 			req.session.worker = worker
 			console.log(req.session);
-			res.status(200).json({"success": "Token Valid"})
+			res.status(200).end();
 		}
 	});
 };
