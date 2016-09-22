@@ -83,7 +83,6 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
   };
 
   $scope.createWorker = function(){
-
     var attributes = { 
       contact_uri: 'client:' + $scope.agent.friendlyName.toLowerCase(), 
       channels: $scope.agent.channels, 
