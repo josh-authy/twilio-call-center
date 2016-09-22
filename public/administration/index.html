@@ -28,6 +28,7 @@
            <thead>
             <tr >
               <th>Name</th>
+              <th>Phone</th>
               <th>Status</th>
               <th>Channel(s)</th>
               <th>Team</th>
@@ -37,6 +38,7 @@
           <tbody>
            <tr ng-repeat="worker in workers track by worker.sid">
             <td>{{worker.friendlyName}}</td>
+            <td>{{worker.phone}}</td>
             <td>{{worker.activityName}}</td>
             <td>{{worker.channelsFriendlyName}}</td>
             <td>{{worker.team}}</td>
@@ -58,9 +60,12 @@
 
             <div class="form-group">
               <label><b>Name&nbsp;&nbsp;&nbsp;</b></label>
-              <input  ng-model="agent.friendlyName" name="friendlyName" type="text" class="form-control" client-name required>&nbsp;&nbsp;&nbsp;
+              <input  ng-model="agent.friendlyName" name="friendlyName" type="text" class="form-control input-sm" client-name required>&nbsp;&nbsp;&nbsp;
+			</div>
+            <div class="form-group">
+			  <label><b>Phone&nbsp;&nbsp;&nbsp;</b></label>
+              <input ng-model="agent.phone" id="phone" name="phone" type="text" class="form-control input-sm" client-phone phone-number>&nbsp;&nbsp;&nbsp;
             </div>
-
             <div class="form-group">
              <label class="checkbox-inline">
               <input type="checkbox" checklist-model="agent.channels" value="phone">Phone
@@ -83,8 +88,9 @@
           <button  style="margin-left:10px" class="btn btn-primary" ng-disabled="agentForm.$invalid || agentForm.$pristine"  ng-click="createWorker()">Save</button>
 
           <div class="alert alert-danger" style="margin-top:10px; margin-bottom:0px" role="alert" ng-show="agentForm.friendlyName.$error.invalidCharacter">Name must be an alphanumeric string</div>
-
         </form>
+		
+		
       </div>
     </div>
   </div>
@@ -145,7 +151,28 @@
 
 <script src="/scripts/directives/ClientNameDirective.js"></script>
 <script src="/scripts/directives/ConvertToNumberDirective.js"></script>
+<link rel="stylesheet" href="/styles/intlTelInput.css">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<style>.iti-flag {background-image: url("/images/flags.png");}</style>
+<script src="/scripts/intlTelInput.min.js"></script>
+<script>
 
+var input = $("#phone"),
+  output = input;
+
+input.intlTelInput({
+  nationalMode: true,
+  utilsScript: "/scripts/telUtils.js"
+});
+
+input.on("keyup change", function() {
+  var intlNumber = input.intlTelInput("getNumber");
+  if (intlNumber) {
+    output.val(intlNumber);
+  }
+});
+
+</script> 
 
 </body>
 </html>
