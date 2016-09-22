@@ -71,6 +71,13 @@ router.route('/agents/logout').post(agents.logout)
 router.route('/agents/session').get(agents.getSession)
 router.route('/agents/call').get(agents.call)
 
+/* routes for authy agent verifation */
+var verification = require('./controllers/verification.js')
+
+router.route('/verification/requestToken').post(verification.requestToken)
+router.route('/verification/verifytoken').post(verification.verifyToken)
+router.route('/verification/entry').post(verification.entry)
+
 /* routes for IVR */
 var ivr = require('./controllers/ivr.js')
 
