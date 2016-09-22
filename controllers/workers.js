@@ -1,5 +1,6 @@
 'use strict'
-const authy = require('authy')('');
+const config = require('../config')
+const authy = require('authy')(config.AUTHY_API_KEY)
 const twilio = require('twilio')
 
 /* client for Twilio TaskRouter */
