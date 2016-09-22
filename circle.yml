@@ -17,7 +17,7 @@ test:
 # Deploying to Heroku
 deployment:
   staging:
-    branch: authy
+    branch: master
     heroku:
       appname: stark-hamlet-32722
 
