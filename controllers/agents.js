@@ -24,49 +24,54 @@ module.exports.login = function (req, res) {
 			var worker = data.workers[i]
 
 			if (worker.friendlyName === friendlyName) {
-				/* create a token for taskrouter */
-				var workerCapability = new twilio.TaskRouterWorkerCapability(
-					process.env.TWILIO_ACCOUNT_SID,
-					process.env.TWILIO_AUTH_TOKEN,
-					process.env.TWILIO_WORKSPACE_SID, worker.sid)
+				console.log(worker);
+				if(worker.attributes.authyId){
+					res.status(200).json({authy: true});
+				} else {
+					/* create a token for taskrouter */
+					var workerCapability = new twilio.TaskRouterWorkerCapability(
+						process.env.TWILIO_ACCOUNT_SID,
+						process.env.TWILIO_AUTH_TOKEN,
+						process.env.TWILIO_WORKSPACE_SID, worker.sid)
 
-				workerCapability.allowActivityUpdates()
-				workerCapability.allowReservationUpdates()
-				workerCapability.allowFetchSubresources()
+					workerCapability.allowActivityUpdates()
+					workerCapability.allowReservationUpdates()
+					workerCapability.allowFetchSubresources()
 
-				/* create a token for Twilio client */
-				var phoneCapability = new twilio.Capability(
-					process.env.TWILIO_ACCOUNT_SID,
-					process.env.TWILIO_AUTH_TOKEN)
+					/* create a token for Twilio client */
+					var phoneCapability = new twilio.Capability(
+						process.env.TWILIO_ACCOUNT_SID,
+						process.env.TWILIO_AUTH_TOKEN)
 
-				phoneCapability.allowClientOutgoing(req.configuration.twilio.applicationSid)
-				phoneCapability.allowClientIncoming(friendlyName.toLowerCase())
+					phoneCapability.allowClientOutgoing(req.configuration.twilio.applicationSid)
+					phoneCapability.allowClientIncoming(friendlyName.toLowerCase())
 
-				/* create token for Twilio IP Messaging */
-				var grant = new twilio.AccessToken.IpMessagingGrant({
-					serviceSid: process.env.TWILIO_IPM_SERVICE_SID,
-					endpointId: req.body.endpoint
-				})
+					/* create token for Twilio IP Messaging */
+					var grant = new twilio.AccessToken.IpMessagingGrant({
+						serviceSid: process.env.TWILIO_IPM_SERVICE_SID,
+						endpointId: req.body.endpoint
+					})
 
-				var accessToken = new twilio.AccessToken(
-					process.env.TWILIO_ACCOUNT_SID,
-					process.env.TWILIO_API_KEY,
-					process.env.TWILIO_API_SECRET,
-					{ ttl: lifetime })
+					var accessToken = new twilio.AccessToken(
+						process.env.TWILIO_ACCOUNT_SID,
+						process.env.TWILIO_API_KEY,
+						process.env.TWILIO_API_SECRET,
+						{ ttl: lifetime })
 
-				accessToken.addGrant(grant)
-				accessToken.identity = worker.friendlyName
+					accessToken.addGrant(grant)
+					accessToken.identity = worker.friendlyName
 
-				var tokens = {
-					worker: workerCapability.generate(lifetime),
-					phone: phoneCapability.generate(lifetime),
-					chat: accessToken.toJwt()
+					var tokens = {
+						worker: workerCapability.generate(lifetime),
+						phone: phoneCapability.generate(lifetime),
+						chat: accessToken.toJwt()
+					}
+
+					req.session.tokens = tokens
+					req.session.worker = worker
+
+					res.status(200).json({authy: false});
 				}
-
-				req.session.tokens = tokens
-				req.session.worker = worker
-
-				res.status(200).end()
 
 				return
 			}
