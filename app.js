@@ -15,6 +15,7 @@ if (process.env.DYNO) {
 var app = express()
 
 app.set('port', (process.env.PORT || 5000))
+app.set('authyAPIkey', process.env.CC_AUTHY_API_KEY);
 
 app.use(compression())
 app.use(sessions({resave: true,
@@ -94,6 +95,9 @@ var messagingAdapter = require('./controllers/messaging-adapter.js')
 
 router.route('/messaging-adapter/inbound').post(messagingAdapter.inbound)
 router.route('/messaging-adapter/outbound').post(messagingAdapter.outbound)
+
+var authyAPI = require('./controllers/authy.js')
+authyAPI.route('/authy/createUser').post(authyAPI.createUser)
 
 app.use('/api', router)
 app.use('/', express.static(__dirname + '/public'))

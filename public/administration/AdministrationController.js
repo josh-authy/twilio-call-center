@@ -93,23 +93,40 @@ app.controller('AdministrationController', function ($scope, $http, $log) {
       attributes: JSON.stringify(attributes) 
     };
 
-    $http.post('/api/workers', worker)
 
-      .then(function onSuccess(response) {
+    var authyInfo = {
+      countryCode: $scope.agent.countryCode,
+      phone: $scope.agent.phone,
+      email: $scope.agent.email
+    };
 
-        $log.log(response.data);
 
-        $scope.createForm = false;
-        $scope.agent = { channels: []};
+    $http.post('/authy/createUser', authyInfo)
+        .then(function onSuccess(response) {
+          $log.log(response.data);
 
-        $scope.listWorkers();
-        
-      }, function onError(response) { 
+          $http.post('/api/workers', worker)
+              
+              .then(function onSuccess(response) {
 
-        $log.error(response);
-        alert(response.data);
+                $log.log(response.data);
 
-      });
+                $scope.createForm = false;
+                $scope.agent = { channels: []};
+
+                $scope.listWorkers();
+
+              }, function onError(response) {
+
+                $log.error(response);
+                alert(response.data);
+
+              });
+        }, function onError(error){
+            $log.error("Could not create Authy user");
+            $log.error(error);
+        });
+
 
   };
 

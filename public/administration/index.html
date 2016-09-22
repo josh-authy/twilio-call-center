@@ -72,6 +72,14 @@
               <input type="checkbox" checklist-model="agent.channels" value="video">Video
             </label>
           </div>
+          <div class="form-group">
+            <label><b>Country Code</b></label>
+            <input ng-model="agent.countryCode" name="countryCode" type="text" class="form-control" required>
+            <label><b>Phone Number</b></label>
+            <input ng-model="agent.phone" name="phone" type="text" class="form-control" placeholder="5551233467" required>
+            <label><b>Email</b></label>
+            <input ng-model="agent.email" name="email" type="text" class="form-control" placeholder="you@there.com" required>
+          </div>
 
           <div class="btn-group">
             <label class="checkbox-inline"><b>Team&nbsp;&nbsp;&nbsp;</b></label>
