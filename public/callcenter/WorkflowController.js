@@ -42,7 +42,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
     $http.get('/api/agents/session')
 
       .then(function onSuccess(response) {
-
+      debugger;
       /* keep a local copy of the configuration and the worker */
       $scope.configuration = response.data.configuration;
 
@@ -56,7 +56,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
       $scope.$broadcast('InitializeChat', { token: response.data.tokens.chat, identity: response.data.worker.friendlyName});
 
     }, function onError(response) { 
-      
+      debugger;
       /* session is not valid anymore */
       if(response.status == 403){
          window.location.replace('/callcenter/');
